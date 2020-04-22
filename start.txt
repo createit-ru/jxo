@@ -1,0 +1,106 @@
+Пример кода для реализации форм (callback)
+
+-------------------------------------------------------------------------------
+0. 
+-------------------------------------------------------------------------------
+ - js и css файлы
+ - сниппеты
+ - шаблоны писем
+
+-------------------------------------------------------------------------------
+1. Обработчик кнопок
+-------------------------------------------------------------------------------
+<a class="js-jxo-popup" data-popup="callback">Заказать звонок</a>
+ИЛИ
+<button class="js-jxo-popup" data-popup="callback">Заказать звонок</button>
+
+
+-------------------------------------------------------------------------------
+2. Подключаем скрипты, файл и этот код
+-------------------------------------------------------------------------------
+$(document).ready(function(){
+    $(window).jxo({
+        FormUrl: '/forms/{form}'
+        
+        /*inputGroupSelector: '.form-group',
+        inputGroupErrorClass: 'has-error',
+        inputErrorMessageSelector: '.help-block'*/
+    });
+});
+
+
+-------------------------------------------------------------------------------
+3. Служебные страницы
+-------------------------------------------------------------------------------
+/forms/callback
+/forms/callback/send
+
+Шаблон - пустой, визуальный рекдактор отключен, доступен для поиска - нет.
+
+
+-------------------------------------------------------------------------------
+4. Пример формы /forms/callback
+-------------------------------------------------------------------------------
+<div class="jxo-popup jxo-popup-callback">
+    <div class="jxo-popup__inner">
+        <div class="js-jxo-close jxo-popup__close">×</div>
+        
+        <div class="jxo-popup__title">Заказать обратный звонок</div>
+        
+        <form action="{$_modx->resource['id'] | url}/send" method="post" class="jxo-form" role="form" data-goal="callback">
+            <div class="jxo-form__step jxo-form__step-form">
+
+                <!-- Formit validation address:blank
+                <div class="form-group" style="display:none;">
+                    <label for="callback-address">Адрес:</label>
+                    <input type="text" id="callback-text" name="address" value="" class="form-control" />
+                </div>
+                -->
+                
+                <div class="form-group">
+                    <label for="callback-name">Ваше имя:</label>
+                    <input type="text" id="callback-name" name="name" value="" class="form-control" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="callback-phone">Ваш телефон:</label>
+                    <input type="text" id="callback-phone" name="phone" value="" class="form-control" />
+                </div>
+                
+                <p>
+                    Отправка формы подразумевает принятие условий Соглашения на обработку персональных данных.
+                </p>
+                
+                <!--
+                <div class="jxo-captcha">
+                    <div class="jxo-captcha__item" id="captcha-callback"></div>
+                    <div class="jxo-captcha__error-message">Поставьте галочку "Я не робот"</div>
+                </div>
+                -->
+                
+                <div>
+                    <input class="btn btn-primary btn-lg" type="submit" value="Перезвоните мне!" />
+                </div>
+            </div> <!-- .jxo-form__step -->
+            
+            <div class="jxo-form__step jxo-form__step-success">
+                <p>
+                  Ваша заявка на обратный звонок принята, ожидайте звонка администратора!
+                </p>
+            </div><!-- .jxo-form__step -->
+        </form>
+    </div>
+</div> <!-- .callback-form -->
+
+-------------------------------------------------------------------------------
+5. Обработчик формы /forms/callback/send, хук для капчи "recaptchav2"
+-------------------------------------------------------------------------------
+{$_modx->runSnippet('!jxo.Formit', [
+    'hooks' => 'email,FormItSaveForm',
+    'formName' => 'form-callback',
+    'emailTpl' => 'form.Callback.Email',
+    'emailTo' => ('manager_email' | option),
+    'emailReplyTo' => ('manager_email' | option),
+    'emailSubject' => 'САЙТ: Запрос звонка | ' ~ ('' | date : 'd.m.Y в H:i'),
+    'validate' => 'phone:required',
+])}

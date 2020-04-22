@@ -1,0 +1,18 @@
+Шаг 1. Регистрируемся
+https://www.google.com/recaptcha/admin
+
+Шаг 2. Добавляем в head (проверяем onloadCaptchaCallback)
+<script src="https://www.google.com/recaptcha/api.js?onload=onloadCaptchaCallback&render=explicit&hl=[[++cultureKey]]" async defer></script>
+
+Шаг 3. Ставим компонент ReCaptchaV2, прописываем ключи сайта в настройках
+
+Шаг 4. Чанк scripts
+<script type="text/javascript">
+    var recaptchav2SiteKey = "{'recaptchav2.site_key' | option}";
+</script>
+
+Шаг 4. Добавляем в формы, ЗАДАЕМ id капчи!
+<div class="jxo-form__captcha">
+    <div class="jxo-form__captcha-item" id="captcha-callback"></div>
+    <div class="jxo-form__captcha-error">Поставьте галочку "Я не робот"</div>
+</div>
